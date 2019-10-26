@@ -1,13 +1,11 @@
+// var socket = io.connect("https://api.softure.com.br");
 var socket = io.connect("http://localhost:3000");
-var tokenSala = "2be4e100-c526-11e9-83f5-ddea0fcff684";
+var tokenSala = "4c54b3c0-e155-11e9-9f40-854d5326d641";
 var participante = {
-    "nome": "Radiomaster",
-    "idExterno": "radiomaster",
-    "idCliente": "1",
-    "dados": {
-        "idUsuario": "4",
-        "nomeusuario": "Funcionário Teste"
-    }
+    "nome": "",
+    "idExterno": "",
+    "idCliente": "",
+    "dados": {}
 };
 
 var lerMensagem = function(elem) {
@@ -26,20 +24,27 @@ $(document).ready(function () {
         e.preventDefault();
         $("#nick").fadeOut();
         $("#chat").fadeIn();
-        var name = $("#nickname").val();
+        var nome = $("#nome").val();
+        var idExterno = $("#idExterno").val();
+        var idCliente = $("#idCliente").val();
         var time = new Date();
         $("#name").html(name);
         $("#time").html('First login: ' + time.getHours() + ':' + time.getMinutes());
 
-        ready = true;
+        participante.nome = nome;
+        participante.idExterno = idExterno;
+        participante.idCliente = idCliente;
+
+        socket.emit("regsitrar-participante", participante);
         socket.emit("entrar-sala", {participante: participante, sala: tokenSala});
+        ready = true;
     });
 
     $("#textarea").keypress(function (e) {
         if (e.which == 13) {
             var text = $("#textarea").val();
             $("#textarea").val('');
-            var time = new Date();
+            var time = new Date();   
             var msgId = time.getTime().toString() + '-' + participante.idExterno;
             let mensagem = {
 				mensagem: text,
